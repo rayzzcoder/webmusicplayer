@@ -1,0 +1,84 @@
+/* Copy root variables and body/background css from about/style.css */
+:root { --bg-color: #0f0f12; --primary: #1DB954; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+body { background-color: var(--bg-color); font-family: 'Poppins', sans-serif; color: white; height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }
+.background-circle { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.5; }
+.circle-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #4a00e0; }
+.circle-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #8e2de2; }
+
+.back-btn { position: absolute; top: 30px; left: 30px; color: #aaa; text-decoration: none; transition: 0.3s; }
+.back-btn:hover { color: var(--primary); }
+
+.contact-box {
+    width: 100%; max-width: 500px; padding: 40px;
+    background: var(--glass); backdrop-filter: blur(20px);
+    border: 1px solid var(--border); border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.37); margin: 20px;
+}
+
+h2 { text-align: center; margin-bottom: 5px; }
+.subtitle { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 0.9rem; }
+
+.input-group { position: relative; margin-bottom: 25px; }
+.input-group input, .input-group textarea {
+    width: 100%; padding: 15px; background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: white; font-size: 1rem; outline: none; transition: 0.3s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.input-group textarea { resize: none; }
+
+.input-group input:focus, .input-group textarea:focus { border-color: var(--primary); background: rgba(255,255,255,0.1); }
+
+.input-group label {
+    position: absolute; left: 15px; top: 15px; color: #aaa;
+    pointer-events: none; transition: 0.3s; font-size: 0.9rem;
+}
+
+.input-group input:focus ~ label, .input-group input:not(:placeholder-shown) ~ label,
+.input-group textarea:focus ~ label, .input-group textarea:not(:placeholder-shown) ~ label {
+    top: -10px; left: 10px; font-size: 0.75rem; padding: 0 5px;
+    background: var(--bg-color); color: var(--primary);
+}
+
+.send-btn {
+    width: 100%; padding: 15px; background: var(--primary);
+    border: none; border-radius: 10px; color: black;
+    font-weight: 600; font-size: 1rem; cursor: pointer; transition: 0.3s;
+}
+.send-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(29, 185, 84, 0.4); }
+
+/* =========================================
+   RESPONSIVE FIX FOR BACK BUTTON
+   ========================================= */
+
+   @media (max-width: 768px) {
+    /* 1. Change Body Layout */
+    /* Allows content to stack vertically instead of forcing center */
+    body {
+        flex-direction: column;
+        justify-content: flex-start; 
+        padding-top: 20px;
+        overflow-y: auto; /* Ensure scrolling is enabled */
+        height: auto;
+    }
+
+    /* 2. Reset the Back Button Position */
+    .back-btn {
+        position: relative; /* Stop floating freely */
+        top: auto;
+        left: auto;
+        display: block;
+        width: 100%;
+        text-align: center; /* Center it for easier tapping */
+        margin-bottom: 20px; /* Push the form down */
+        font-size: 1.1rem;
+        z-index: 10;
+    }
+
+    /* 3. Adjust Container Spacing */
+    .contact-box {
+        margin-top: 10px;
+        width: 90%; /* Ensure it fits on screen */
+    }
+}

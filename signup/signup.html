@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - VibePlayer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="background-circle circle-1"></div>
+    <div class="background-circle circle-2"></div>
+
+    <div class="signup-container">
+        <form id="signupForm">
+            <h2>Create Account</h2>
+            <p class="subtitle">Join us to listen to the vibe</p>
+            
+            <div class="input-group">
+                <input type="text" id="username" name="username" required placeholder=" ">
+                <label for="username">Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="email" id="email" name="email" required placeholder=" ">
+                <label for="email">Email</label>
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="password" name="password" required placeholder=" ">
+                <label for="password">Password</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder=" ">
+                <label for="confirmPassword">Confirm Password</label>
+            </div>
+
+            <button type="submit" class="signup-btn">Register</button>
+            
+            <p class="footer-text">Already have an account? <a href="../login/login.html">Login</a></p>
+        </form>
+    </div>
+
+    <script src="signup.js"></script>
+</body>
+</html>

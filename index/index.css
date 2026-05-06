@@ -1,0 +1,568 @@
+:root {
+    --bg-color: #0f0f12;
+    --primary: #1DB954;
+    --primary-glow: rgba(29, 185, 84, 0.4);
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --text-sec: #b3b3b3;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-color);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh; /* Changed from height to min-height for mobile scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Backgrounds */
+.background-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+    opacity: 0.6;
+}
+.circle-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #4a00e0; }
+.circle-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #8e2de2; }
+
+/* Navbar Styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #b3b3b3;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.3s;
+    position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: white;
+}
+
+/* Underline animation */
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--primary);
+    transition: width 0.3s;
+}
+
+.nav-links a:hover::after, .nav-links a.active::after {
+    width: 100%;
+}
+
+.logout-btn {
+    color: #ff5555 !important; /* Red for logout */
+}
+
+.menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
+
+/* Responsive Nav */
+@media (max-width: 768px) {
+    .navbar { padding: 15px 20px; }
+    .nav-links { display: none; } /* Hidden on mobile for now to keep it simple */
+    .menu-toggle { display: block; }
+}
+
+/* Main Layout */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.player-container {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    height: 550px;
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    border-radius: 25px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    overflow: hidden;
+}
+
+/* Playlist Side (Left) */
+.playlist-box {
+    width: 40%;
+    border-right: 1px solid var(--glass-border);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0,0,0,0.2);
+}
+
+.song-list {
+    list-style: none;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+/* Scrollbar styling */
+.song-list::-webkit-scrollbar { width: 5px; }
+.song-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+.song-list li {
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-sec);
+    transition: 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-list li:hover { background: rgba(255,255,255,0.05); color: white; }
+.song-list li.active {
+    background: linear-gradient(90deg, var(--primary), rgba(29, 185, 84, 0.5));
+    color: white;
+    font-weight: 600;
+}
+
+/* Player Side (Right) */
+.player-box {
+    width: 60%;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.album-art-wrapper {
+    width: 180px;
+    height: 180px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.album-cover {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    border: 4px solid rgba(255,255,255,0.1);
+    position: relative;
+    z-index: 2;
+    transition: 0.5s;
+}
+
+.spinning { animation: spin 8s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* The Title - Perfectly Centered */
+.song-title {
+    text-align: center;
+    margin: 0;
+    max-width: 80%;       /* Leave space for the heart so they don't overlap */
+    white-space: normal;  /* Allow wrapping */
+    line-height: 1.2;
+    z-index: 1;           /* Ensure text is above background */
+}
+
+/* Container holds everything together */
+.song-header {
+    position: relative; /* This allows us to position the heart inside it */
+    width: 100%;
+    display: flex;
+    justify-content: center; /* Centers the title horizontally */
+    align-items: center;     /* Centers vertically */
+    margin: 15px 0;          /* Space above and below */
+    padding: 0 10px;         /* Prevents touching the edges */
+}
+
+/* The Heart - Floating on the Right */
+.song-header #likeBtn {
+    position: absolute;   /* Take it out of the flow */
+    right: 10px;          /* Pin it to the right edge */
+    top: 50%;             /* Move to vertical middle */
+    transform: translateY(-50%); /* Perfect vertical centering */
+    
+    /* Previous styles included */
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.2s;
+    display: none;        /* Hidden by default (handled by JS) */
+}
+
+/* Inputs & Controls */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #444;
+    border-radius: 5px;
+    cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.progress-area { width: 100%; margin-bottom: 20px; }
+.time-info { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+
+.controls-main { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; }
+.ctrl-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+.play-btn-main {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: white; color: black; border: none;
+    font-size: 1.5rem; cursor: pointer; display: flex;
+    justify-content: center; align-items: center;
+    transition: 0.2s;
+}
+.play-btn-main:hover { transform: scale(1.1); background: var(--primary); color: white; }
+
+.volume-area { display: flex; align-items: center; gap: 10px; width: 60%; }
+.vol-btn { background: none; border: none; color: #aaa; font-size: 1rem; cursor: pointer; }
+
+/* ================= RESPONSIVE CSS ================= */
+@media (max-width: 768px) {
+    body { height: auto; overflow-y: auto; }
+    
+    .player-container {
+        flex-direction: column-reverse; /* Playlist at bottom */
+        height: auto; /* Allow growth */
+        max-height: none;
+    }
+
+    .playlist-box {
+        width: 100%;
+        height: 300px; /* Fixed height for playlist on mobile */
+        border-right: none;
+        border-top: 1px solid var(--glass-border);
+    }
+
+    .player-box {
+        width: 100%;
+        padding: 40px 20px;
+    }
+
+    .album-art-wrapper { width: 150px; height: 150px; }
+    .song-title { font-size: 1.2rem; }
+}
+
+/* =========================================
+   ADD THIS TO THE BOTTOM OF INDEX.CSS
+   ========================================= */
+
+/* 1. Layout for the "Your Playlist" header and "Add" button */
+.playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-right: 5px;
+}
+
+.playlist-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: white;
+}
+
+/* 2. Styling the "Add Song" Button */
+.add-btn {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    padding: 6px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between icon and text */
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    background: var(--primary);
+    color: black;
+    box-shadow: 0 0 10px var(--primary-glow);
+    transform: translateY(-2px);
+}
+
+/* 3. Update Song List Item to hold Delete Button */
+.song-list li {
+    /* We add Flexbox here to align the Song Name and Trash Icon */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 4. Styling the Song Name Text */
+/* This ensures long names don't push the delete button off screen */
+/* Corrected .song-info block */
+.song-info {
+    flex: 1; /* Takes up all available space */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* ?? THIS IS THE FIX ?? */
+    cursor: pointer; /* Makes it clickable (shows hand icon) */
+    /* pointer-events: none;  <-- DELETE THIS LINE */
+}
+
+/* 5. Styling the Delete (Trash) Button */
+.delete-btn {
+    background: transparent;
+    border: none;
+    color: #ff5555; /* Red color */
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    
+    /* Hidden by default, shown on hover */
+    opacity: 0; 
+    transform: translateX(10px);
+}
+
+/* Reveal the delete button when hovering over the song row */
+.song-list li:hover .delete-btn {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.delete-btn:hover {
+    background: rgba(255, 85, 85, 0.15);
+    transform: scale(1.1) !important;
+}
+
+/* Responsive adjustment for Add Button */
+@media (max-width: 768px) {
+    .add-btn {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+    }
+}
+
+/* ===== Search Bar Styling ===== */
+.search-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+    width: 100%;
+    /* No background here, we put it on the input or use flex if needed, 
+       but keeping your structure: */
+}
+
+.search-wrapper input {
+    width: 100%;
+    /* Top: 10px, Right: 40px (space for filter), Bottom: 10px, Left: 40px (space for search icon) */
+    padding: 10px 40px 10px 40px; 
+    
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-wrapper input::placeholder {
+    color: #aaa;
+}
+
+.search-wrapper input:focus {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(29, 185, 84, 0.2);
+}
+
+/* The Search Icon (Left Side) */
+.search-wrapper > i { 
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+/* The Filter Button (Right Side) */
+/* This positions the Heart button inside the search bar */
+.search-wrapper #favFilterBtn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================
+   MOBILE MENU STYLES
+   ========================================= */
+
+/* When the menu is open (active class added by JS) */
+@media (max-width: 768px) {
+    .nav-links.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 60px; /* Adjust based on navbar height */
+        right: 0;
+        width: 100%;
+        background: rgba(15, 15, 18, 0.95); /* Dark background */
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 999;
+        animation: slideDown 0.3s ease forwards;
+    }
+
+    .nav-links.active li {
+        margin: 15px 0;
+        text-align: center;
+    }
+
+    .nav-links.active a {
+        font-size: 1.2rem;
+        display: block;
+    }
+}
+
+/* Simple animation for smooth opening */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Styling for Active Shuffle/Repeat Buttons */
+.active-btn {
+    color: #1DB954 !important; /* Spotify Green */
+    position: relative;
+}
+
+/* Optional: Add a tiny dot below to show it's on */
+.active-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #1DB954;
+    border-radius: 50%;
+}
+
+/* ===== Upload Modal Styling ===== */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Black background with opacity */
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: rgba(25, 25, 30, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    color: white;
+}
+
+.modal-content h3 { margin-bottom: 20px; color: var(--primary); }
+
+.modal-content input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: white;
+    outline: none;
+}
+
+.modal-content label { display: block; text-align: left; margin: 10px 0 5px; font-size: 0.9rem; color: #aaa;}
+.modal-content input[type="file"] { width: 100%; margin-bottom: 15px; font-size: 0.9rem; }
+
+.modal-buttons { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
+
+.confirm-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.cancel-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    border-radius: 20px;
+    cursor: pointer;
+}
+.cancel-btn:hover { border-color: white; color: white; }
